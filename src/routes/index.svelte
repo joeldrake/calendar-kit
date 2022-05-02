@@ -25,35 +25,39 @@
 	];
 
 	const imageMargins = [
-		'-20', // 'Januari'
-		'-50', // 'Februari'
-		'-40', // 'Mars'
-		'-20', // 'April'
-		'-20', // 'Maj'
-		'-20', // 'Juni'
-		'-20', // 'Juli'
-		'-20', // 'Augusti'
-		'-20', // 'September'
-		'-20', // 'Oktober'
-		'-20', // 'November'
-		'-20' // 'December'
+		'-30', // 'Januari'
+		'-30', // 'Februari'
+		'-20', // 'Mars'
+		'-45', // 'April'
+		'-43', // 'Maj'
+		'-45', // 'Juni'
+		'-35', // 'Juli'
+		'-60', // 'Augusti'
+		'-30', // 'September'
+		'-30', // 'Oktober'
+		'-55', // 'November'
+		'-38' // 'December'
 	];
 
 	const presetDates = [
 		{ date: '5 jan', text: 'Trettondags&shy;afton' },
 		{ date: '6 jan', text: 'Trettonde&shy;dag jul', textRed: true },
 		{ date: '17 jan', text: 'Karins födelsedag 🎉', textRed: true },
+
 		{ date: '14 feb', text: 'Alla hjärtans dag ❤️' },
+
 		{ date: '14 apr', text: 'Skärtorsdagen<br>🥚' },
 		{ date: '15 apr', text: 'Långfredagen<br>🐣', textRed: true },
 		{ date: '16 apr', text: 'Påskafton<br>🐥' },
 		{ date: '17 apr', text: 'Påskdagen<br>🐓', textRed: true },
 		{ date: '18 apr', text: 'Annandag påsk<br>🍗', textRed: true },
 		{ date: '30 apr', text: 'Valborgs&shy;mässo&shy;afton 🍻' },
+
 		{ date: '1 maj', text: 'Första maj', textRed: true },
 		{ date: '8 maj', text: 'Signe på besök', textRed: true },
 		{ date: '20 maj', text: 'Joels födelsedag 🎉', textRed: true },
 		{ date: '26 maj', text: 'Kristi himmelsfärd', textRed: true },
+		{ date: '29 maj', text: 'Mors dag' },
 
 		{ date: '4 juni', text: 'Pingstafton' },
 		{ date: '5 juni', text: 'Pingstdagen', textRed: true },
@@ -108,8 +112,18 @@
 		{ date: '13 aug', text: 'Semester' },
 		{ date: '14 aug', text: 'Semester' },
 
+		{ date: '9 sep', text: 'Nya Svenska Ord med David Sundin' },
+
+		{ date: '23 sep', text: 'Helsingfors' },
+		{ date: '24 sep', text: 'Helsingfors' },
+		{ date: '25 sep', text: 'Helsingfors' },
+
+		{ date: '30 okt', text: 'Vintertid börjar' },
+
 		{ date: '4 nov', text: 'Allhelgona&shy;afton 👻 ' },
 		{ date: '5 nov', text: 'Alla helgons dag 👻', textRed: true },
+		{ date: '27 nov', text: 'Första advent' },
+
 		{ date: '24 dec', text: 'Julafton 🎅🏻' },
 		{ date: '25 dec', text: 'Juldagen 🎁', textRed: true },
 		{ date: '26 dec', text: 'Annandag jul', textRed: true },
@@ -142,7 +156,6 @@
 
 			if (day === 1) {
 				const daysBeforeFirstMonday = getDaysBeforeFirstMonday(date);
-				console.log('daysBeforeFirstMonday', daysBeforeFirstMonday);
 				if (daysBeforeFirstMonday > 0) {
 					for (let extraDay = 0; extraDay < daysBeforeFirstMonday; extraDay++) {
 						calendar[year][month].push({
@@ -160,7 +173,6 @@
 				textRed
 			});
 		}
-		console.log(calendar);
 	}
 </script>
 
@@ -172,7 +184,7 @@
 	<div class="month">
 		<div class="image">
 			<img
-				src={`/images/${1}.JPG`}
+				src={`/images/${i + 1}.JPG`}
 				style={`margin-top:${imageMargins[i]}%`}
 				alt=""
 			/>
@@ -208,6 +220,8 @@
 
 <style>
 	.month {
+		max-width: 790px;
+		margin: 0 auto 5rem auto;
 		padding: 1rem;
 		--border-size: 1px;
 		--border-size-negative: calc(
@@ -233,7 +247,7 @@
 	}
 	.days {
 		display: grid;
-		grid-template-columns: 1.2rem repeat(7, 0.142857fr);
+		grid-template-columns: 1.2rem repeat(7, calc(14.2857% - 0.171428rem));
 	}
 
 	.day {
@@ -260,6 +274,10 @@
 		text-align: center;
 		font-size: 0.8em;
 		letter-spacing: 1px;
+
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 
 	.day.active {
@@ -278,6 +296,10 @@
 	}
 
 	@media print {
+		.month {
+			margin: 0;
+			max-width: none;
+		}
 		.image {
 			height: 30vh;
 		}
