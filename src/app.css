@@ -1,0 +1,51 @@
+@import './styles/sanitize.css';
+
+:root {
+	--color-text-primary: #222;
+	--color-text-secondary: #444;
+	--color-background-primary: #fff;
+	--color-background-secondary: #e7e3da;
+	--color-grey: #ddd;
+	--color-off-white: #edf0f2;
+	--color-work: #ffdd18;
+	--color-red: #ff3e00;
+	--color-interactive-primary: #005cef;
+
+	--site-width: 768px;
+	--site-width-large: 960px;
+	--site-padding: 2rem;
+	--site-padding-small: 1rem;
+	--site-padding-large: 4rem;
+}
+
+@media screen and (max-width: 250px) {
+	:root {
+		--site-padding: 1rem;
+		--site-padding-small: 0.5rem;
+		--site-padding-large: 2rem;
+	}
+}
+
+html,
+body {
+	background-color: var(--color-background-primary);
+	font-family: 'Futura', 'Inter', -apple-system, 'Helvetica Neue', Helvetica,
+		Arial, sans-serif;
+	font-size: 16px;
+	color: var(--color-text-primary);
+}
+
+input,
+textarea,
+button {
+	font-size: inherit;
+	font-family: inherit;
+}
+
+a {
+	color: var(--color-interactive-primary);
+}
+
+button:focus:not(:focus-visible) {
+	outline: none;
+}
