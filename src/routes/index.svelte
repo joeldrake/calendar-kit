@@ -231,7 +231,7 @@
 	.month {
 		max-width: 790px;
 		margin: 0 auto 5rem auto;
-		padding: 1rem;
+		padding: 1.25rem;
 		--border-size: 1px;
 		--border-size-negative: calc(
 			var(--border-size) - var(--border-size) - var(--border-size)
@@ -244,15 +244,10 @@
 		color: var(--color-grey);
 		display: flex;
 		justify-content: right;
-		padding-right: 0.2rem;
+		padding-right: 0.25rem;
 		align-items: center;
 	}
 
-	@media (max-width: 820px) {
-		.week {
-			padding-right: 0rem;
-		}
-	}
 	.image {
 		overflow: hidden;
 		height: 21.5rem;
@@ -308,7 +303,7 @@
 	}
 
 	.day.placeholder {
-		color: var(--color-grey);
+		color: var(--color-grey-light);
 		border-color: var(--color-grey-light);
 	}
 
