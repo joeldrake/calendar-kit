@@ -29,11 +29,11 @@
 		'-30', // 'Februari'
 		'-20', // 'Mars'
 		'-45', // 'April'
-		'-43', // 'Maj'
-		'-45', // 'Juni'
+		'-47', // 'Maj'
+		'-39', // 'Juni'
 		'-35', // 'Juli'
 		'-60', // 'Augusti'
-		'-30', // 'September'
+		'-32', // 'September'
 		'-30', // 'Oktober'
 		'-55', // 'November'
 		'-38' // 'December'
@@ -42,7 +42,7 @@
 	const presetDates = [
 		{ date: '5 jan', text: 'Trettondags&shy;afton' },
 		{ date: '6 jan', text: 'Trettonde&shy;dag jul', textRed: true },
-		{ date: '17 jan', text: 'Karins födelsedag 🎉', textRed: true },
+		{ date: '17 jan', text: 'Karins födelsedag 🎉' },
 
 		{ date: '14 feb', text: 'Alla hjärtans dag ❤️' },
 
@@ -54,8 +54,8 @@
 		{ date: '30 apr', text: 'Valborgs&shy;mässo&shy;afton 🍻' },
 
 		{ date: '1 maj', text: 'Första maj', textRed: true },
-		{ date: '8 maj', text: 'Signe på besök', textRed: true },
-		{ date: '20 maj', text: 'Joels födelsedag 🎉', textRed: true },
+		{ date: '8 maj', text: 'Signe på besök' },
+		{ date: '20 maj', text: 'Joels födelsedag 🎉' },
 		{ date: '26 maj', text: 'Kristi himmelsfärd', textRed: true },
 		{ date: '29 maj', text: 'Mors dag' },
 
@@ -127,7 +127,7 @@
 		{ date: '24 dec', text: 'Julafton 🎅🏻' },
 		{ date: '25 dec', text: 'Juldagen 🎁', textRed: true },
 		{ date: '26 dec', text: 'Annandag jul', textRed: true },
-		{ date: '31 dec', text: 'Nyårsafton 🎆' }
+		{ date: '31 dec', text: 'Nyårsafton 🎆', textRed: true }
 	];
 
 	let calendar = { [year]: [] };
@@ -158,8 +158,17 @@
 				const daysBeforeFirstMonday = getDaysBeforeFirstMonday(date);
 				if (daysBeforeFirstMonday > 0) {
 					for (let extraDay = 0; extraDay < daysBeforeFirstMonday; extraDay++) {
+						const placeholderDate = changeDays(
+							date,
+							-(daysBeforeFirstMonday - extraDay)
+						);
+						const placeholderDateFriendly = getDateFriendly(
+							placeholderDate
+						).split(' ')[0];
+
 						calendar[year][month].push({
-							date: changeDays(date, -(daysBeforeFirstMonday - extraDay)),
+							label: placeholderDateFriendly,
+							date: placeholderDate,
 							isPlaceholder: true
 						});
 					}
@@ -205,7 +214,7 @@
 					<div class="week">
 						{day.date ? getWeek(day.date) : ''}
 					</div>{/if}
-				<div class={day.label ? 'day active' : 'day'}>
+				<div class="day" class:placeholder={day.isPlaceholder}>
 					{day.label || ''}
 					{#if day.text && day.label}
 						<div class="day-text" class:textRed={day.textRed}>
@@ -234,8 +243,15 @@
 		font-size: 0.8rem;
 		color: var(--color-grey);
 		display: flex;
-		justify-content: left;
+		justify-content: right;
+		padding-right: 0.2rem;
 		align-items: center;
+	}
+
+	@media (max-width: 820px) {
+		.week {
+			padding-right: 0rem;
+		}
 	}
 	.image {
 		overflow: hidden;
@@ -246,8 +262,14 @@
 		width: 100%;
 	}
 	.days {
+		--week-number-width: 1.2rem;
 		display: grid;
-		grid-template-columns: 1.2rem repeat(7, calc(14.2857% - 0.171428rem));
+		grid-template-columns: var(--week-number-width) repeat(
+				7,
+				calc(14.2857% - 0.171428rem)
+			);
+		width: calc(100% + var(--week-number-width));
+		transform: translateX(calc(var(--week-number-width) * -1));
 	}
 
 	.day {
@@ -255,11 +277,13 @@
 		margin-top: var(--border-size-negative);
 		transform: translate(var(--border-size), var(--border-size));
 
-		border: var(--border-size) solid transparent;
+		border: var(--border-size) solid var(--color-grey);
 
 		padding: 0.25rem;
 
 		color: var(--color-text-secondary);
+
+		height: 6rem;
 	}
 
 	.month-headline {
@@ -271,18 +295,21 @@
 	.day.headline {
 		font-weight: bold;
 		text-transform: uppercase;
-		text-align: center;
+		text-align: left;
 		font-size: 0.8em;
 		letter-spacing: 1px;
 
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+
+		border-color: transparent;
+		height: auto;
 	}
 
-	.day.active {
-		border-color: var(--color-grey);
-		height: 6rem;
+	.day.placeholder {
+		color: var(--color-grey);
+		border-color: var(--color-grey-light);
 	}
 
 	.day-text {
@@ -308,7 +335,7 @@
 			page-break-after: always;
 		}
 
-		.day.active {
+		.day:not(.headline) {
 			height: 100px;
 		}
 
