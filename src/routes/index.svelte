@@ -1,11 +1,12 @@
-<script>
+<script lang="ts">
 	import {
-		getDaysInMonth,
+		changeDays,
+		dateRegex,
 		getDateFriendly,
 		getDaysBeforeFirstMonday,
-		getWeek,
-		changeDays
-	} from '$lib/dateHelper.js';
+		getDaysInMonth,
+		getWeek
+	} from '$lib/dateHelper';
 
 	const year = 2022;
 
@@ -39,98 +40,69 @@
 		-20 // 'December'
 	];
 
-	const presetDates = [
-		{ date: '5 jan', text: 'Trettondags&shy;afton' },
-		{ date: '6 jan', text: 'Trettonde&shy;dag jul', textRed: true },
-		{ date: '17 jan', text: 'Karins födelsedag 🎉' },
+	const presetDatesText = `
+2022-01-05 Trettondags&shy;afton
+2022-01-06 Trettonde&shy;dag jul red_day
 
-		{ date: '14 feb', text: 'Alla hjärtans dag ❤️' },
+2022-01-17 Karins födelsedag 🎉
 
-		{ date: '14 apr', text: 'Skärtorsdagen<br>🥚' },
-		{ date: '15 apr', text: 'Långfredagen<br>🐣', textRed: true },
-		{ date: '16 apr', text: 'Påskafton<br>🐥' },
-		{ date: '17 apr', text: 'Påskdagen<br>🐓', textRed: true },
-		{ date: '18 apr', text: 'Annandag påsk<br>🍗', textRed: true },
-		{ date: '30 apr', text: 'Valborgs&shy;mässo&shy;afton 🍻' },
+2022-02-14 Alla hjärtans dag ❤️
 
-		{ date: '1 maj', text: 'Första maj', textRed: true },
-		{ date: '8 maj', text: 'Signe på besök' },
-		{ date: '20 maj', text: 'Joels födelsedag 🎉' },
-		{ date: '26 maj', text: 'Kristi himmelsfärd', textRed: true },
-		{ date: '29 maj', text: 'Mors dag' },
+2022-04-14 Skärtorsdagen<br>🥚
+2022-04-15 Långfredagen<br>🐣 red_day
+2022-04-16 Påskafton<br>🐥
+2022-04-17 Påskdagen<br>🐓 red_day
+2022-04-18 Annandag påsk<br>🍗 red_day
+2022-04-30 Valborgs&shy;mässo&shy;afton 🍻
 
-		{ date: '4 juni', text: 'Pingstafton' },
-		{ date: '5 juni', text: 'Pingstdagen', textRed: true },
-		{ date: '6 juni', text: 'Nationaldagen 🇸🇪', textRed: true },
+2022-05-01 Första maj red_day
+2022-05-20 Joels födelsedag 🎉
+2022-05-26 Kristi himmelsfärd red_day
+2022-05-29 Mors dag
 
-		{
-			date: '24 juni',
-			text: 'Celines födelsedag 🎉<br>Midsommar&shy;afton',
-			textRed: true
-		},
-		{ date: '25 juni', text: 'Midsommar&shy;dagen', textRed: true },
+2022-06-04 Pingstafton
+2022-06-05 Pingstdagen red_day
+2022-06-06 Nationaldagen 🇸🇪 red_day
+2022-06-24 Celines födelsedag 🎉<br>Midsommar&shy;afton red_day
+2022-06-25 Midsommar&shy;dagen red_day
 
-		// Semester
-		{ date: '11 juli', text: 'Semester + Gotland' },
-		{ date: '12 juli', text: 'Semester + Gotland' },
-		{ date: '13 juli', text: 'Semester + Gotland' },
-		{ date: '14 juli', text: 'Semester + Gotland' },
-		{ date: '15 juli', text: 'Semester + Gotland' },
-		{ date: '16 juli', text: 'Semester + Gotland' },
-		{ date: '17 juli', text: 'Semester + Gotland' },
+2022-10-30 Vintertid börjar
 
-		{ date: '18 juli', text: 'Semester + Gotland' },
-		{ date: '19 juli', text: 'Semester' },
-		{ date: '20 juli', text: 'Semester' },
-		{ date: '21 juli', text: 'Semester' },
-		{ date: '22 juli', text: 'Semester' },
-		{ date: '23 juli', text: 'Semester' },
-		{ date: '24 juli', text: 'Semester' },
+2022-11-04 Allhelgona&shy;afton 👻
+2022-11-05 Alla helgons dag 👻 red_day
+2022-11-27 Första advent
 
-		{ date: '24 juli', text: 'Semester' },
-		{ date: '25 juli', text: 'Semester' },
-		{ date: '26 juli', text: 'Semester' },
-		{ date: '27 juli', text: 'Semester' },
-		{ date: '28 juli', text: 'Semester' },
-		{ date: '29 juli', text: 'Semester' },
-		{ date: '30 juli', text: 'Semester' },
-		{ date: '31 juli', text: 'Semester' },
+2022-12-24 Julafton 🎅🏻
+2022-12-25 Juldagen 🎁 red_day
+2022-12-26 Annandag jul red_day
+2022-12-31 Nyårsafton 🎆 red_day
+`;
 
-		{ date: '1 aug', text: 'Semester' },
-		{ date: '2 aug', text: 'Semester' },
-		{ date: '3 aug', text: 'Semester' },
-		{ date: '4 aug', text: 'Semester' },
-		{ date: '5 aug', text: 'Semester' },
-		{ date: '6 aug', text: 'Semester' },
-		{ date: '7 aug', text: 'Semester' },
+	let calendar: App.Calendar = { [year]: [] };
 
-		{ date: '8 aug', text: 'Semester' },
-		{ date: '9 aug', text: 'Semester' },
-		{ date: '10 aug', text: 'Semester' },
-		{ date: '11 aug', text: 'Semester' },
-		{ date: '12 aug', text: 'Semester' },
-		{ date: '13 aug', text: 'Semester' },
-		{ date: '14 aug', text: 'Semester' },
+	const presetDates = [];
+	for (const row of presetDatesText.split('\n')) {
+		let textRed: boolean | undefined;
+		let rowParts = row.split(' ');
+		const validDate = dateRegex.test(rowParts[0]);
+		if (!validDate) continue;
+		const date = rowParts[0];
+		rowParts.shift(); // removes date
 
-		{ date: '9 sep', text: 'Nya Svenska Ord med David Sundin' },
+		// remove and track any keywords
+		if (rowParts.includes('red_day')) {
+			textRed = true;
+			rowParts = rowParts.filter((word) => word !== 'red_day');
+		}
 
-		{ date: '23 sep', text: 'Helsingfors' },
-		{ date: '24 sep', text: 'Helsingfors' },
-		{ date: '25 sep', text: 'Helsingfors' },
+		presetDates.push({
+			date: getDateFriendly(new Date(date)),
+			text: rowParts.join(' '),
+			textRed
+		});
+	}
 
-		{ date: '30 okt', text: 'Vintertid börjar' },
-
-		{ date: '4 nov', text: 'Allhelgona&shy;afton 👻 ' },
-		{ date: '5 nov', text: 'Alla helgons dag 👻', textRed: true },
-		{ date: '27 nov', text: 'Första advent' },
-
-		{ date: '24 dec', text: 'Julafton 🎅🏻' },
-		{ date: '25 dec', text: 'Juldagen 🎁', textRed: true },
-		{ date: '26 dec', text: 'Annandag jul', textRed: true },
-		{ date: '31 dec', text: 'Nyårsafton 🎆', textRed: true }
-	];
-
-	let calendar = { [year]: [] };
+	console.log(presetDates);
 
 	for (let month = 0; month < 12; month++) {
 		calendar[year].push([]);
@@ -236,7 +208,7 @@
 
 <style>
 	.month {
-		max-width: 790px;
+		max-width: 760px;
 		margin: 0 auto 5rem auto;
 		padding: 1.25rem;
 		--border-size: 1px;
