@@ -25,18 +25,18 @@
 	];
 
 	const imageMargins = [
-		'-30', // 'Januari'
-		'-30', // 'Februari'
-		'-20', // 'Mars'
-		'-45', // 'April'
-		'-47', // 'Maj'
-		'-39', // 'Juni'
-		'-35', // 'Juli'
-		'-60', // 'Augusti'
-		'-32', // 'September'
-		'-30', // 'Oktober'
-		'-55', // 'November'
-		'-38' // 'December'
+		-10, // 'Januari'
+		-20, // 'Februari'
+		-20, // 'Mars'
+		-20, // 'April'
+		-20, // 'Maj'
+		-20, // 'Juni'
+		-20, // 'Juli'
+		-20, // 'Augusti'
+		-20, // 'September'
+		-20, // 'Oktober'
+		-20, // 'November'
+		-20 // 'December'
 	];
 
 	const presetDates = [
@@ -197,6 +197,13 @@
 				style={`margin-top:${imageMargins[i]}%`}
 				alt=""
 			/>
+			<input
+				type="range"
+				class="slider"
+				min="-100"
+				max="0"
+				bind:value={imageMargins[i]}
+			/>
 		</div>
 		<div class="month-headline">{months[i]} {year}</div>
 		<div class="days">
@@ -249,13 +256,23 @@
 	}
 
 	.image {
+		position: relative;
 		overflow: hidden;
-		height: 21.5rem;
+		max-height: 21.5rem;
 	}
 
 	.image img {
 		width: 100%;
 	}
+
+	.image .slider {
+		position: absolute;
+		top: 0;
+		right: 0;
+		transform: rotate(90deg) translateX(100%);
+		transform-origin: top right;
+	}
+
 	.days {
 		--week-number-width: 1.2rem;
 		display: grid;
@@ -323,7 +340,11 @@
 			max-width: none;
 		}
 		.image {
-			height: 30vh;
+			max-height: 30vh;
+		}
+
+		.image .slider {
+			display: none;
 		}
 
 		.month {
