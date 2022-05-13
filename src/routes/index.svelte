@@ -134,9 +134,8 @@
 							date,
 							-(daysBeforeFirstMonday - extraDay)
 						);
-						const placeholderDateFriendly = getDateFriendly(
-							placeholderDate
-						).split(' ')[0];
+						const placeholderDateFriendly =
+							getDateFriendly(placeholderDate).split(' ')[0];
 
 						calendar[year][month].push({
 							label: placeholderDateFriendly,
@@ -163,12 +162,14 @@
 
 {#each calendar[year] as month, i}
 	<div class="month">
-		<div class="image">
-			<img
-				src={`/images/${i + 1}.JPG`}
-				style={`margin-top:${imageMargins[i]}%`}
-				alt=""
-			/>
+		<div class="image-wrapper">
+			<div class="image">
+				<img
+					src={`/images/${i + 1}.JPG`}
+					style={`margin-top:${imageMargins[i]}%`}
+					alt=""
+				/>
+			</div>
 			<input
 				type="range"
 				class="slider"
@@ -227,8 +228,10 @@
 		align-items: center;
 	}
 
-	.image {
+	.image-wrapper {
 		position: relative;
+	}
+	.image {
 		overflow: hidden;
 		max-height: 21.5rem;
 	}
@@ -237,7 +240,7 @@
 		width: 100%;
 	}
 
-	.image .slider {
+	.image-wrapper .slider {
 		position: absolute;
 		top: 0;
 		right: 0;
