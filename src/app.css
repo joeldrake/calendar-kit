@@ -1,4 +1,4 @@
-@import './styles/css-reset.css';
+@import './styles/sanitize.css';
 
 :root {
 	--color-text-primary: #222;
@@ -41,6 +41,10 @@ textarea,
 button {
 	font-size: inherit;
 	font-family: inherit;
+}
+
+img {
+	display: block;
 }
 
 a {
