@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { browser } from '$app/env';
+	import { fade } from 'svelte/transition';
 	import {
 		changeDays,
 		dateRegex,
@@ -6,7 +8,22 @@
 		getDaysBeforeFirstMonday,
 		getDaysInMonth,
 		getWeek
-	} from '$lib/dateHelper';
+	} from '$lib/utils/dateHelper';
+	import Settings from '$lib/components/Settings.svelte';
+	import { customDates, imageHeight, imageMargins } from '$lib/store';
+
+	let settingsOpen = false;
+
+	$: if (browser) {
+		document.documentElement.style.setProperty(
+			'--image-height',
+			`${$imageHeight}%`
+		);
+		localStorage.setItem('imageHeight', $imageHeight.toString());
+	}
+	$: if (browser) {
+		localStorage.setItem('imageMargins', JSON.stringify($imageMargins));
+	}
 
 	const year = 2022;
 
@@ -25,133 +42,85 @@
 		'December'
 	];
 
-	const imageMargins = [
-		-10, // 'Januari'
-		-20, // 'Februari'
-		-20, // 'Mars'
-		-20, // 'April'
-		-20, // 'Maj'
-		-20, // 'Juni'
-		-20, // 'Juli'
-		-20, // 'Augusti'
-		-20, // 'September'
-		-20, // 'Oktober'
-		-20, // 'November'
-		-20 // 'December'
-	];
-
-	const presetDatesText = `
-2022-01-05 Trettondags&shy;afton
-2022-01-06 Trettonde&shy;dag jul red_day
-
-2022-01-17 Karins födelsedag 🎉
-
-2022-02-14 Alla hjärtans dag ❤️
-
-2022-04-14 Skärtorsdagen<br>🥚
-2022-04-15 Långfredagen<br>🐣 red_day
-2022-04-16 Påskafton<br>🐥
-2022-04-17 Påskdagen<br>🐓 red_day
-2022-04-18 Annandag påsk<br>🍗 red_day
-2022-04-30 Valborgs&shy;mässo&shy;afton 🍻
-
-2022-05-01 Första maj red_day
-2022-05-20 Joels födelsedag 🎉
-2022-05-26 Kristi himmelsfärd red_day
-2022-05-29 Mors dag
-
-2022-06-04 Pingstafton
-2022-06-05 Pingstdagen red_day
-2022-06-06 Nationaldagen 🇸🇪 red_day
-2022-06-24 Celines födelsedag 🎉<br>Midsommar&shy;afton red_day
-2022-06-25 Midsommar&shy;dagen red_day
-
-2022-10-30 Vintertid börjar
-
-2022-11-04 Allhelgona&shy;afton 👻
-2022-11-05 Alla helgons dag 👻 red_day
-2022-11-27 Första advent
-
-2022-12-24 Julafton 🎅🏻
-2022-12-25 Juldagen 🎁 red_day
-2022-12-26 Annandag jul red_day
-2022-12-31 Nyårsafton 🎆 red_day
-`;
-
 	let calendar: App.Calendar = { [year]: [] };
 
-	const presetDates = [];
-	for (const row of presetDatesText.split('\n')) {
-		let textRed: boolean | undefined;
-		let rowParts = row.split(' ');
-		const validDate = dateRegex.test(rowParts[0]);
-		if (!validDate) continue;
-		const date = rowParts[0];
-		rowParts.shift(); // removes date
+	$: {
+		calendar = { [year]: [] }; // reset for rerenders
+		const presetDates = [];
+		for (const row of $customDates.split('\n')) {
+			let textRed: boolean | undefined;
+			let rowParts = row.split(' ');
+			const validDate = dateRegex.test(rowParts[0]);
+			if (!validDate) continue;
+			const date = rowParts[0];
+			rowParts.shift(); // removes date
 
-		// remove and track any keywords
-		if (rowParts.includes('red_day')) {
-			textRed = true;
-			rowParts = rowParts.filter((word) => word !== 'red_day');
-		}
-
-		presetDates.push({
-			date: getDateFriendly(new Date(date)),
-			text: rowParts.join(' '),
-			textRed
-		});
-	}
-
-	console.log(presetDates);
-
-	for (let month = 0; month < 12; month++) {
-		calendar[year].push([]);
-
-		const daysInMonth = getDaysInMonth(month, year);
-
-		for (let day = 1; day <= daysInMonth; day++) {
-			const date = new Date(year, month, day, 12);
-
-			const dateFriendly = getDateFriendly(date);
-
-			let label = dateFriendly;
-			if (day !== 1) label = label.split(' ')[0];
-
-			let findDate = presetDates.find((d) => {
-				return d.date === dateFriendly;
-			});
-			let text, textRed;
-			if (findDate) {
-				text = findDate.text;
-				if (findDate.textRed) textRed = true;
+			// remove and track any keywords
+			if (rowParts.includes('red_day')) {
+				textRed = true;
+				rowParts = rowParts.filter((word) => word !== 'red_day');
 			}
 
-			if (day === 1) {
-				const daysBeforeFirstMonday = getDaysBeforeFirstMonday(date);
-				if (daysBeforeFirstMonday > 0) {
-					for (let extraDay = 0; extraDay < daysBeforeFirstMonday; extraDay++) {
-						const placeholderDate = changeDays(
-							date,
-							-(daysBeforeFirstMonday - extraDay)
-						);
-						const placeholderDateFriendly =
-							getDateFriendly(placeholderDate).split(' ')[0];
-
-						calendar[year][month].push({
-							label: placeholderDateFriendly,
-							date: placeholderDate,
-							isPlaceholder: true
-						});
-					}
-				}
-			}
-
-			calendar[year][month].push({
-				date,
-				label,
-				text,
+			presetDates.push({
+				date: getDateFriendly(new Date(date)),
+				text: rowParts.join(' '),
 				textRed
 			});
+		}
+
+		for (let month = 0; month < 12; month++) {
+			calendar[year].push([]);
+
+			const daysInMonth = getDaysInMonth(month, year);
+
+			for (let day = 1; day <= daysInMonth; day++) {
+				const date = new Date(year, month, day, 12);
+
+				const dateFriendly = getDateFriendly(date);
+
+				let label = dateFriendly;
+				if (day !== 1) label = label.split(' ')[0];
+
+				let findDate = presetDates.find((d) => {
+					return d.date === dateFriendly;
+				});
+				let text, textRed;
+				if (findDate) {
+					text = findDate.text;
+					if (findDate.textRed) textRed = true;
+				}
+
+				if (day === 1) {
+					const daysBeforeFirstMonday = getDaysBeforeFirstMonday(date);
+					if (daysBeforeFirstMonday > 0) {
+						for (
+							let extraDay = 0;
+							extraDay < daysBeforeFirstMonday;
+							extraDay++
+						) {
+							const placeholderDate = changeDays(
+								date,
+								-(daysBeforeFirstMonday - extraDay)
+							);
+							const placeholderDateFriendly =
+								getDateFriendly(placeholderDate).split(' ')[0];
+
+							calendar[year][month].push({
+								label: placeholderDateFriendly,
+								date: placeholderDate,
+								isPlaceholder: true
+							});
+						}
+					}
+				}
+
+				calendar[year][month].push({
+					date,
+					label,
+					text,
+					textRed
+				});
+			}
 		}
 	}
 </script>
@@ -160,24 +129,51 @@
 {JSON.stringify(calendar,null,2)}
 </pre> -->
 
+<button class="settings-button" on:click={() => (settingsOpen = !settingsOpen)}>
+	{#if settingsOpen}
+		<img
+			src="/images/close.svg"
+			alt="Stäng inställningar"
+			transition:fade={{ duration: 250 }}
+		/>
+	{:else}
+		<img
+			src="/images/menu.svg"
+			alt="Öppna inställningar"
+			transition:fade={{ duration: 250 }}
+		/>
+	{/if}
+</button>
+
+{#if settingsOpen}
+	<Settings on:clickoutside={() => (settingsOpen = false)} />
+{/if}
+
+<input
+	class="slider slider-month"
+	type="range"
+	min="0"
+	max="70"
+	bind:value={$imageHeight}
+/>
+
 {#each calendar[year] as month, i}
 	<div class="month">
-		<div class="image-wrapper">
-			<div class="image">
-				<img
-					src={`/images/${i + 1}.JPG`}
-					style={`margin-top:${imageMargins[i]}%`}
-					alt=""
-				/>
-			</div>
-			<input
-				type="range"
-				class="slider"
-				min="-100"
-				max="0"
-				bind:value={imageMargins[i]}
+		<input
+			type="range"
+			class="slider slider-image"
+			min="-100"
+			max="0"
+			bind:value={$imageMargins[i]}
+		/>
+		<div class="image">
+			<img
+				src={`/images/${i + 1}.JPG`}
+				style={`margin-top:${$imageMargins[i]}%`}
+				alt=""
 			/>
 		</div>
+
 		<div class="month-headline">{months[i]} {year}</div>
 		<div class="days">
 			<div class="week" />
@@ -208,14 +204,57 @@
 {/each}
 
 <style>
+	:root {
+		--padding: 40px;
+		--headlines: 50px;
+		--padding-and-headlines: calc(var(--padding) + var(--headlines));
+
+		--image-height: 33%; /* 70% is max*/
+
+		--days-percent: calc(100% - var(--image-height));
+		--days-height: calc(var(--days-percent) - var(--padding-and-headlines));
+	}
+
+	.settings-button {
+		position: fixed;
+		z-index: 2;
+		top: 20px;
+		left: 20px;
+		display: grid;
+		justify-content: center;
+		align-items: center;
+		border-radius: 100%;
+		border: var(--border-size) solid var(--color-grey);
+		background-color: white;
+		height: 40px;
+		width: 40px;
+	}
+	.settings-button > * {
+		grid-area: 1 / -1;
+	}
 	.month {
+		position: relative;
+		scroll-snap-align: start;
 		max-width: 760px;
 		margin: 0 auto 5rem auto;
-		padding: 1.25rem;
-		--border-size: 1px;
-		--border-size-negative: calc(
-			var(--border-size) - var(--border-size) - var(--border-size)
-		);
+		padding: 20px;
+		height: 1090px;
+	}
+	.slider-image {
+		position: absolute;
+		top: 0;
+		left: 20px;
+		width: calc(100% - 40px);
+	}
+
+	.slider-month {
+		position: fixed;
+		top: 20px;
+		right: 0;
+		height: calc(100vh - 40px);
+		width: 20px;
+		transform: rotate(180deg);
+		appearance: slider-vertical;
 	}
 
 	.week {
@@ -228,24 +267,13 @@
 		align-items: center;
 	}
 
-	.image-wrapper {
-		position: relative;
-	}
 	.image {
 		overflow: hidden;
-		max-height: 21.5rem;
+		max-height: var(--image-height);
 	}
 
 	.image img {
 		width: 100%;
-	}
-
-	.image-wrapper .slider {
-		position: absolute;
-		top: 0;
-		right: 0;
-		transform: rotate(90deg) translateX(100%);
-		transform-origin: top right;
 	}
 
 	.days {
@@ -255,8 +283,10 @@
 				7,
 				calc(14.2857% - 0.171428rem)
 			);
+		grid-template-rows: auto repeat(6, 1fr);
 		width: calc(100% + var(--week-number-width));
 		transform: translateX(calc(var(--week-number-width) * -1));
+		height: var(--days-height);
 	}
 
 	.day {
@@ -270,7 +300,7 @@
 
 		color: var(--color-text-secondary);
 
-		height: 6rem;
+		overflow: hidden;
 	}
 
 	.month-headline {
@@ -310,24 +340,18 @@
 	}
 
 	@media print {
+		.slider,
+		.settings-button {
+			display: none;
+		}
 		.month {
 			margin: 0;
 			max-width: none;
-		}
-		.image {
-			max-height: 30vh;
-		}
-
-		.image .slider {
-			display: none;
+			height: 100vh;
 		}
 
 		.month {
 			page-break-after: always;
-		}
-
-		.day:not(.headline) {
-			height: 100px;
 		}
 
 		@page {
