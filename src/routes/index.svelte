@@ -10,44 +10,21 @@
 		getWeek
 	} from '$lib/utils/dateHelper';
 	import Settings from '$lib/components/Settings.svelte';
-	import { customDates, imageHeight, imageMargins } from '$lib/store';
-
-	let settingsOpen = false;
+	import { store, files } from '$lib/store';
 
 	$: if (browser) {
 		document.documentElement.style.setProperty(
 			'--image-height',
-			`${$imageHeight}%`
+			`${$store.imageHeight}%`
 		);
-		localStorage.setItem('imageHeight', $imageHeight.toString());
-	}
-	$: if (browser) {
-		localStorage.setItem('imageMargins', JSON.stringify($imageMargins));
 	}
 
-	const year = 2022;
-
-	const months = [
-		'Januari',
-		'Februari',
-		'Mars',
-		'April',
-		'Maj',
-		'Juni',
-		'Juli',
-		'Augusti',
-		'September',
-		'Oktober',
-		'November',
-		'December'
-	];
-
-	let calendar: App.Calendar = { [year]: [] };
+	let calendar: App.Calendar = { [$store.year]: [] };
 
 	$: {
-		calendar = { [year]: [] }; // reset for rerenders
+		calendar = { [$store.year]: [] }; // reset for rerenders
 		const presetDates = [];
-		for (const row of $customDates.split('\n')) {
+		for (const row of $store.customDates.split('\n')) {
 			let textRed: boolean | undefined;
 			let rowParts = row.split(' ');
 			const validDate = dateRegex.test(rowParts[0]);
@@ -69,12 +46,12 @@
 		}
 
 		for (let month = 0; month < 12; month++) {
-			calendar[year].push([]);
+			calendar[$store.year].push([]);
 
-			const daysInMonth = getDaysInMonth(month, year);
+			const daysInMonth = getDaysInMonth(month, $store.year);
 
 			for (let day = 1; day <= daysInMonth; day++) {
-				const date = new Date(year, month, day, 12);
+				const date = new Date($store.year, month, day, 12);
 
 				const dateFriendly = getDateFriendly(date);
 
@@ -105,7 +82,7 @@
 							const placeholderDateFriendly =
 								getDateFriendly(placeholderDate).split(' ')[0];
 
-							calendar[year][month].push({
+							calendar[$store.year][month].push({
 								label: placeholderDateFriendly,
 								date: placeholderDate,
 								isPlaceholder: true
@@ -114,7 +91,7 @@
 					}
 				}
 
-				calendar[year][month].push({
+				calendar[$store.year][month].push({
 					date,
 					label,
 					text,
@@ -129,8 +106,11 @@
 {JSON.stringify(calendar,null,2)}
 </pre> -->
 
-<button class="settings-button" on:click={() => (settingsOpen = !settingsOpen)}>
-	{#if settingsOpen}
+<button
+	class="settings-button"
+	on:click={() => ($store.settingsOpen = !$store.settingsOpen)}
+>
+	{#if $store.settingsOpen}
 		<img
 			src="/images/close.svg"
 			alt="Stäng inställningar"
@@ -145,36 +125,42 @@
 	{/if}
 </button>
 
-{#if settingsOpen}
-	<Settings on:clickoutside={() => (settingsOpen = false)} />
+{#if $store.settingsOpen}
+	<Settings />
 {/if}
 
-<input
-	class="slider slider-month"
-	type="range"
-	min="0"
-	max="70"
-	bind:value={$imageHeight}
-/>
+{#if $store.showSliders}
+	<input
+		class="slider slider-month"
+		type="range"
+		min="0"
+		max="70"
+		bind:value={$store.imageHeight}
+	/>
+{/if}
 
-{#each calendar[year] as month, i}
+{#each calendar[$store.year] as month, i}
 	<div class="month">
-		<input
-			type="range"
-			class="slider slider-image"
-			min="-100"
-			max="0"
-			bind:value={$imageMargins[i]}
-		/>
+		{#if $store.showSliders}
+			<input
+				type="range"
+				class="slider slider-image"
+				min="-100"
+				max="0"
+				bind:value={$store.imageMargins[i]}
+			/>
+		{/if}
 		<div class="image">
 			<img
-				src={`/images/${i + 1}.JPG`}
-				style={`margin-top:${$imageMargins[i]}%`}
+				src={$files[i]
+					? URL.createObjectURL($files[i])
+					: `/images/generic/${i + 1}.JPG`}
+				style={`margin-top:${$store.imageMargins[i]}%`}
 				alt=""
 			/>
 		</div>
 
-		<div class="month-headline">{months[i]} {year}</div>
+		<div class="month-headline">{$store.months[i]} {$store.year}</div>
 		<div class="days">
 			<div class="week" />
 			<div class="day headline">Måndag</div>
@@ -188,8 +174,9 @@
 			{#each month as day, x}
 				{#if x % 7 === 0}
 					<div class="week">
-						{day.date ? getWeek(day.date) : ''}
-					</div>{/if}
+						{day.date && $store.showWeekNumbers ? getWeek(day.date) : ''}
+					</div>
+				{/if}
 				<div class="day" class:placeholder={day.isPlaceholder}>
 					{day.label || ''}
 					{#if day.text && day.label}
@@ -251,7 +238,7 @@
 		position: fixed;
 		top: 20px;
 		right: 0;
-		height: calc(100vh - 40px);
+		height: calc(100vh - 90px);
 		width: 20px;
 		transform: rotate(180deg);
 		appearance: slider-vertical;

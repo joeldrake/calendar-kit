@@ -1,41 +1,66 @@
 import { browser } from '$app/env';
 import { writable } from 'svelte/store';
 import { defaultCustomDates } from '$lib/defaultCustomDates';
+import { getFiles } from '$lib/utils/db';
 
-export const defaultImageHeight = 33;
-export const defaultImageMargins = [
-	-20, // 'Januari'
-	-20, // 'Februari'
-	-20, // 'Mars'
-	-20, // 'April'
-	-20, // 'Maj'
-	-20, // 'Juni'
-	-20, // 'Juli'
-	-20, // 'Augusti'
-	-20, // 'September'
-	-20, // 'Oktober'
-	-20, // 'November'
-	-20 // 'December'
+export const files = writable([] as File[]);
+
+getFiles();
+
+const genericMargins = [-14, -22, -16, -9, -8, -5, -8, -17, -15, -18, -16, -15];
+const personalMargins = [
+	-34, // 'Januari'
+	-29, // 'Februari'
+	-16, // 'Mars'
+	-47, // 'April'
+	-49, // 'Maj'
+	-38, // 'Juni'
+	-37, // 'Juli'
+	-38, // 'Augusti'
+	-26, // 'September'
+	-18, // 'Oktober'
+	-28, // 'November'
+	-33 // 'December'
 ];
-let savedDates, savedImageHeight, savedImageMargins;
+
+export const storeDefault = {
+	year: 2022,
+	settingsOpen: false,
+	settingsWidth: '33vw',
+	showWeekNumbers: true,
+	showSliders: false,
+	customDates: defaultCustomDates,
+	imageHeight: 33,
+	imageMargins: genericMargins,
+	months: [
+		'Januari',
+		'Februari',
+		'Mars',
+		'April',
+		'Maj',
+		'Juni',
+		'Juli',
+		'Augusti',
+		'September',
+		'Oktober',
+		'November',
+		'December'
+	]
+};
+
+let savedStore;
 if (browser) {
-	savedDates = localStorage.getItem('customDates');
-	savedImageHeight = localStorage.getItem('imageHeight');
-	savedImageMargins = localStorage.getItem('imageMargins');
+	savedStore = localStorage.getItem('store');
 }
 
-export const customDates = writable(
-	typeof savedDates === 'string' ? savedDates : defaultCustomDates
+export const store = writable(
+	typeof savedStore === 'string'
+		? (JSON.parse(savedStore) as typeof storeDefault)
+		: storeDefault
 );
 
-export const imageHeight = writable(
-	typeof savedImageHeight === 'string'
-		? Number(savedImageHeight)
-		: defaultImageHeight
-);
-
-export const imageMargins = writable(
-	typeof savedImageMargins === 'string'
-		? JSON.parse(savedImageMargins)
-		: defaultImageMargins
-);
+store.subscribe((value) => {
+	if (browser) {
+		localStorage.setItem('store', JSON.stringify(value));
+	}
+});

@@ -51,6 +51,7 @@
 
 html,
 body {
+	accent-color: var(--color-interactive-primary);
 	background-color: var(--color-background-primary);
 	font-family: 'Futura', 'Inter', -apple-system, 'Helvetica Neue', Helvetica,
 		Arial, sans-serif;
@@ -66,6 +67,12 @@ button {
 	font-family: inherit;
 }
 
+input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+	transform: translateY(1px);
+}
+
 img {
 	display: block;
 }
@@ -74,7 +81,24 @@ a {
 	color: var(--color-interactive-primary);
 }
 
+button {
+	background-color: var(--color-interactive-primary);
+	color: white;
+	border: none;
+	height: 40px;
+	border-radius: 20px;
+	padding: 0 1rem;
+}
+
+button[disabled] {
+	background-color: var(--color-grey);
+}
+
 button:focus:not(:focus-visible) {
 	outline: none;
+}
+
+:focus:not(:active) {
+    outline-offset: 3px;
 }
 
