@@ -160,7 +160,7 @@
 			/>
 		</div>
 
-		<div class="month-headline">{$store.months[i]} {$store.year}</div>
+		<div class="month-headline">{$store.months[i] || ''} {$store.year}</div>
 		<div class="days">
 			<div class="week" />
 			<div class="day headline">Måndag</div>

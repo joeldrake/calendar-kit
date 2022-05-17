@@ -2,6 +2,7 @@ import { browser } from '$app/env';
 import { writable } from 'svelte/store';
 import { defaultCustomDates } from '$lib/defaultCustomDates';
 import { getFiles } from '$lib/utils/db';
+import { getMonthsFriendly } from './utils/dateHelper';
 
 export const files = writable([] as File[]);
 
@@ -23,7 +24,12 @@ const genericMargins = [-14, -22, -16, -9, -8, -5, -8, -17, -15, -18, -16, -15];
 // 	-33 // 'December'
 // ];
 
+const months = new Array(12)
+	.fill(null)
+	.map((_, i) => (browser ? getMonthsFriendly(new Date(2022, i)) : null));
+
 export const storeDefault = {
+	lang: 'sv',
 	year: 2022,
 	settingsOpen: false,
 	settingsWidth: '33vw',
@@ -32,20 +38,21 @@ export const storeDefault = {
 	customDates: defaultCustomDates,
 	imageHeight: 33,
 	imageMargins: genericMargins,
-	months: [
-		'Januari',
-		'Februari',
-		'Mars',
-		'April',
-		'Maj',
-		'Juni',
-		'Juli',
-		'Augusti',
-		'September',
-		'Oktober',
-		'November',
-		'December'
-	]
+	months
+	// months: [
+	// 	'Januari',
+	// 	'Februari',
+	// 	'Mars',
+	// 	'April',
+	// 	'Maj',
+	// 	'Juni',
+	// 	'Juli',
+	// 	'Augusti',
+	// 	'September',
+	// 	'Oktober',
+	// 	'November',
+	// 	'December'
+	// ]
 };
 
 let savedStore;

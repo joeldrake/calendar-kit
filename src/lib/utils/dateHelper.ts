@@ -1,3 +1,7 @@
+import { browser } from '$app/env';
+import { get } from 'svelte/store';
+import { store } from '$lib/store';
+
 export const dateRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
 
 export function getDaysInMonth(month: number, year: number) {
@@ -9,13 +13,25 @@ export function getDaysBeforeFirstMonday(date: Date) {
 	return day - (day === 0 ? -6 : 1);
 }
 
+export function getMonthsFriendly(date: Date) {
+	if (!browser) return;
+	const dateOptions: Intl.DateTimeFormatOptions = {
+		month: 'long'
+	};
+
+	const savedStore = localStorage.getItem('store');
+	const lang = savedStore ? JSON.parse(savedStore).lang || 'sv' : 'sv';
+
+	return new Intl.DateTimeFormat(lang, dateOptions).format(date);
+}
+
 export function getDateFriendly(date: Date) {
 	const dateOptions: Intl.DateTimeFormatOptions = {
 		day: 'numeric',
 		month: 'short'
 	};
 
-	return new Intl.DateTimeFormat('sv', dateOptions)
+	return new Intl.DateTimeFormat(get(store).lang, dateOptions)
 		.format(date)
 		.replace('.', '');
 }
