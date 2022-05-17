@@ -1,8 +1,6 @@
 export const defaultCustomDates = `2022-01-05 Trettondags&shy;afton
 2022-01-06 Trettonde&shy;dag jul red_day
 
-2022-01-17 Karins födelsedag 🎉
-
 2022-02-14 Alla hjärtans dag ❤️
 
 2022-04-14 Skärtorsdagen<br>🥚
@@ -13,14 +11,13 @@ export const defaultCustomDates = `2022-01-05 Trettondags&shy;afton
 2022-04-30 Valborgs&shy;mässo&shy;afton 🍻
 
 2022-05-01 Första maj red_day
-2022-05-20 Joels födelsedag 🎉
 2022-05-26 Kristi himmelsfärd red_day
 2022-05-29 Mors dag
 
 2022-06-04 Pingstafton
 2022-06-05 Pingstdagen red_day
 2022-06-06 Nationaldagen 🇸🇪 red_day
-2022-06-24 Celines födelsedag 🎉<br>Midsommar&shy;afton red_day
+2022-06-24 Midsommar&shy;afton red_day
 2022-06-25 Midsommar&shy;dagen red_day
 
 2022-10-30 Vintertid börjar
