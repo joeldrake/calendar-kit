@@ -112,6 +112,12 @@
 	const setSettingsWidthToStore = debounce((newSettingsWidth: string) => {
 		$store.settingsWidth = newSettingsWidth;
 	});
+
+	function handleYearChange(e: InputEvent) {
+		const target = e.target as HTMLInputElement;
+		console.log(Number(target.value));
+		$store.year = Number(target.value);
+	}
 </script>
 
 <svelte:body
@@ -125,6 +131,17 @@
 	transition:fly={{ duration: 250, x: -300 }}
 >
 	<div class="settings__inner">
+		<div class="section">
+			<label>
+				År
+				<select bind:value={$store.year}>
+					{#each new Array(81) as _, index}
+						<option value={2020 + index}>{2020 + index}</option>
+					{/each}
+				</select>
+			</label>
+		</div>
+
 		<div class="section">
 			<label>
 				<input

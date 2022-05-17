@@ -8,20 +8,20 @@ export const files = writable([] as File[]);
 getFiles();
 
 const genericMargins = [-14, -22, -16, -9, -8, -5, -8, -17, -15, -18, -16, -15];
-const personalMargins = [
-	-34, // 'Januari'
-	-29, // 'Februari'
-	-16, // 'Mars'
-	-47, // 'April'
-	-49, // 'Maj'
-	-38, // 'Juni'
-	-37, // 'Juli'
-	-38, // 'Augusti'
-	-26, // 'September'
-	-18, // 'Oktober'
-	-28, // 'November'
-	-33 // 'December'
-];
+// const personalMargins = [
+// 	-34, // 'Januari'
+// 	-29, // 'Februari'
+// 	-16, // 'Mars'
+// 	-47, // 'April'
+// 	-49, // 'Maj'
+// 	-38, // 'Juni'
+// 	-37, // 'Juli'
+// 	-38, // 'Augusti'
+// 	-26, // 'September'
+// 	-18, // 'Oktober'
+// 	-28, // 'November'
+// 	-33 // 'December'
+// ];
 
 export const storeDefault = {
 	year: 2022,

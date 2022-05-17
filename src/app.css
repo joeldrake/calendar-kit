@@ -61,6 +61,7 @@ body {
 }
 
 input,
+select,
 textarea,
 button {
 	font-size: inherit;
