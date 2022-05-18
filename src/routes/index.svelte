@@ -155,7 +155,7 @@
 			<img
 				src={$files[i]
 					? URL.createObjectURL($files[i])
-					: `/images/generic/${i + 1}.JPG`}
+					: `/images/generic/${i + 1}.jpg`}
 				style={`margin-top:${$store.imageMargins[i]}%`}
 				alt=""
 			/>
