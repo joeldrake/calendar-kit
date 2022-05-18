@@ -55,8 +55,7 @@
 
 				const dateFriendly = getDateFriendly(date);
 
-				let label = dateFriendly;
-				if (day !== 1) label = label.split(' ')[0];
+				let label = day !== 1 ? day : dateFriendly;
 
 				let findDate = presetDates.find((d) => {
 					return d.date === dateFriendly;
@@ -79,8 +78,10 @@
 								date,
 								-(daysBeforeFirstMonday - extraDay)
 							);
-							const placeholderDateFriendly =
-								getDateFriendly(placeholderDate).split(' ')[0];
+							const placeholderDateFriendly = getDateFriendly(
+								placeholderDate,
+								true
+							);
 
 							calendar[$store.year][month].push({
 								label: placeholderDateFriendly,
@@ -163,13 +164,9 @@
 		<div class="month-headline">{$store.months[i] || ''} {$store.year}</div>
 		<div class="days">
 			<div class="week" />
-			<div class="day headline">Måndag</div>
-			<div class="day headline">Tisdag</div>
-			<div class="day headline">Onsdag</div>
-			<div class="day headline">Torsdag</div>
-			<div class="day headline">Fredag</div>
-			<div class="day headline">Lördag</div>
-			<div class="day headline">Söndag</div>
+			{#each $store.weekdays as weekday}
+				<div class="day headline">{weekday}</div>
+			{/each}
 
 			{#each month as day, x}
 				{#if x % 7 === 0}

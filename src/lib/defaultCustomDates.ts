@@ -31,3 +31,12 @@ export const defaultCustomDates = `2022-01-05 Trettondags&shy;afton
 2022-12-26 Annandag jul red_day
 2022-12-31 Nyårsafton 🎆 red_day
 `;
+
+export const defaultCustomDatesEnglish = `2022-02-14 Valentine's day ❤️
+
+2022-06-04 4th of juli
+
+2022-12-24 Christmas eve 🎅🏻
+2022-12-25 Christmas day 🎁 red_day
+2022-12-31 New years 🎆 red_day
+`;

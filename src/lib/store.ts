@@ -2,8 +2,6 @@ import { browser } from '$app/env';
 import { writable } from 'svelte/store';
 import { defaultCustomDates } from '$lib/defaultCustomDates';
 import { getFiles } from '$lib/utils/db';
-import { getMonthsFriendly } from './utils/dateHelper';
-
 export const files = writable([] as File[]);
 
 getFiles();
@@ -24,9 +22,19 @@ const genericMargins = [-14, -22, -16, -9, -8, -5, -8, -17, -15, -18, -16, -15];
 // 	-33 // 'December'
 // ];
 
-const months = new Array(12)
-	.fill(null)
-	.map((_, i) => (browser ? getMonthsFriendly(new Date(2022, i)) : null));
+export function getMonths(lang?: string) {
+	return Array.from({ length: 12 }, (_, i) =>
+		getFriendlyMonth(new Date(2022, i), lang)
+	);
+}
+
+export function getWeekdays(lang?: string) {
+	const monday = getFirstDayOfWeek();
+	return Array.from({ length: 7 }, (_, i) => {
+		const day = changeDays(monday, i);
+		return getFriendlyWeekday(day, lang);
+	});
+}
 
 export const storeDefault = {
 	lang: 'sv',
@@ -38,21 +46,8 @@ export const storeDefault = {
 	customDates: defaultCustomDates,
 	imageHeight: 33,
 	imageMargins: genericMargins,
-	months
-	// months: [
-	// 	'Januari',
-	// 	'Februari',
-	// 	'Mars',
-	// 	'April',
-	// 	'Maj',
-	// 	'Juni',
-	// 	'Juli',
-	// 	'Augusti',
-	// 	'September',
-	// 	'Oktober',
-	// 	'November',
-	// 	'December'
-	// ]
+	weekdays: getWeekdays('sv'),
+	months: getMonths('sv')
 };
 
 let savedStore;
@@ -71,3 +66,47 @@ store.subscribe((value) => {
 		localStorage.setItem('store', JSON.stringify(value));
 	}
 });
+
+// UTILS
+
+export function getFriendlyMonth(date: Date, forceLang?: string) {
+	const dateOptions: Intl.DateTimeFormatOptions = {
+		month: 'long'
+	};
+	const lang = forceLang || getLang();
+	return new Intl.DateTimeFormat(lang, dateOptions).format(date);
+}
+
+export function getFriendlyWeekday(date: Date, forceLang?: string) {
+	const dateOptions: Intl.DateTimeFormatOptions = {
+		weekday: 'long'
+	};
+	const lang = forceLang || getLang();
+
+	//temp fix just to get the english weekdays to fit...
+	if (lang !== 'sv') dateOptions.weekday = 'short';
+
+	return new Intl.DateTimeFormat(lang, dateOptions).format(date);
+}
+
+function getLang() {
+	const savedStore = browser && localStorage.getItem('store');
+	return savedStore ? (JSON.parse(savedStore).lang as string) || 'sv' : 'sv';
+}
+
+function getFirstDayOfWeek() {
+	const date = new Date();
+	const day = date.getDay(); // 👉️ get day of week
+
+	// 👇️ day of month - day of week (-6 if Sunday), otherwise +1
+	const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+
+	return new Date(date.setDate(diff));
+}
+
+export function changeDays(date: Date, days: number) {
+	const oneDay = 1000 * 3600 * 24;
+	const newDateInMilliseconds = date.getTime() + days * oneDay;
+
+	return new Date(newDateInMilliseconds);
+}

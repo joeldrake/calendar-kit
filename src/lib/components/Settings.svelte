@@ -3,8 +3,14 @@
 	import { fly } from 'svelte/transition';
 	import { debounce } from '$lib/utils/debounce';
 	import { move } from '$lib/utils/move';
-	import { files, store, storeDefault } from '$lib/store';
-	import { saveFiles, getFiles } from '$lib/utils/db';
+	import {
+		files,
+		store,
+		storeDefault,
+		getMonths,
+		getWeekdays
+	} from '$lib/store';
+	import { saveFiles, saveFile } from '$lib/utils/db';
 
 	let settings: HTMLElement | null;
 	let dragElement: HTMLElement | null;
@@ -56,6 +62,14 @@
 	function handleFilesChanged(e: Event) {
 		const target = e.target as HTMLInputElement;
 		saveFiles([...(target.files || [])]);
+	}
+
+	function handleFileChanged(e: Event, id: number) {
+		const target = e.target as HTMLInputElement;
+		const files = target.files;
+		console.log(files);
+		if (!files) return;
+		saveFile(files[0], id);
 	}
 
 	function handleClearFiles() {
@@ -115,8 +129,21 @@
 
 	function handleYearChange(e: InputEvent) {
 		const target = e.target as HTMLInputElement;
-		console.log(Number(target.value));
 		$store.year = Number(target.value);
+	}
+
+	function handleLangChange(e: any) {
+		const target = e.target as HTMLInputElement;
+		store.update((state) => {
+			const months = getMonths(target.value);
+			const weekdays = getWeekdays(target.value);
+			return {
+				...state,
+				lang: target.value,
+				months,
+				weekdays
+			};
+		});
 	}
 </script>
 
@@ -131,6 +158,15 @@
 	transition:fly={{ duration: 250, x: -300 }}
 >
 	<div class="settings__inner">
+		<div class="section">
+			<label>
+				Språk
+				<select value={$store.lang} on:change={handleLangChange}>
+					<option value="sv">Svenska</option>
+					<option value="en">Engelska</option>
+				</select>
+			</label>
+		</div>
 		<div class="section">
 			<label>
 				År
@@ -202,7 +238,25 @@
 			{#if $files}
 				{#each $files as file, index}
 					<div class="settings__image-wrapper">
-						{$store.months[index]}
+						<div>
+							{$store.months[index]}
+
+							<input
+								id={`single-file-upload-${index}`}
+								class="settings__file-upload"
+								type="file"
+								accept="image/*"
+								on:change={(e) => handleFileChanged(e, index)}
+							/>
+
+							<button
+								class="settings__image-button"
+								on:click={() =>
+									document
+										.getElementById(`single-file-upload-${index}`)
+										?.click()}>Ändra</button
+							>
+						</div>
 						<img
 							src={URL.createObjectURL(file)}
 							class="settings__image"
@@ -287,6 +341,14 @@
 		display: grid;
 		grid-template-columns: 1fr auto;
 		margin-bottom: 0.5rem;
+	}
+
+	button.settings__image-button {
+		width: auto;
+		display: block;
+		padding: 0 0.75rem;
+		height: 30px;
+		font-size: 0.9rem;
 	}
 
 	textarea {

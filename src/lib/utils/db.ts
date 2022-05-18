@@ -37,9 +37,30 @@ export async function saveFiles(newFiles?: File[]) {
 
 		if (newFiles?.length) {
 			for (const [id, file] of Object.entries(newFiles.slice(0, 12))) {
-				store.put({ id, file }, id);
+				store.put(file, Number(id));
 			}
 		}
+	});
+	conn.close();
+}
+
+export async function saveFile(file: File, id: number) {
+	if (!browser) return;
+	const conn = await openDb('images');
+	if (!conn) return;
+	await new Promise((resolve, reject) => {
+		const tx = conn.transaction('store', 'readwrite');
+		tx.oncomplete = resolve;
+		tx.onerror = () => reject(new Error('file storage error'));
+
+		const store = tx.objectStore('store');
+
+		files.update((current) => {
+			current[id] = file;
+			return current;
+		});
+
+		store.put(file, id);
 	});
 	conn.close();
 }
@@ -55,9 +76,9 @@ export async function getFiles() {
 		const images_store = tx.objectStore('store');
 		const images_request = images_store.getAll();
 		images_request.onsuccess = () => {
-			let images = images_request.result || ([] as File[]);
-			if (images.length) images.sort((a, b) => a.id - b.id);
-			images = images.map((item) => item.file);
+			const images = (images_request.result as File[]) || ([] as File[]);
+			//if (images.length) images.sort((a, b) => a.id - b.id);
+			//images = images.map((item) => item.file);
 			files.set(images || []);
 		};
 	});

@@ -13,23 +13,11 @@ export function getDaysBeforeFirstMonday(date: Date) {
 	return day - (day === 0 ? -6 : 1);
 }
 
-export function getMonthsFriendly(date: Date) {
-	if (!browser) return;
+export function getDateFriendly(date: Date, onlyNumber?: boolean) {
 	const dateOptions: Intl.DateTimeFormatOptions = {
-		month: 'long'
+		day: 'numeric'
 	};
-
-	const savedStore = localStorage.getItem('store');
-	const lang = savedStore ? JSON.parse(savedStore).lang || 'sv' : 'sv';
-
-	return new Intl.DateTimeFormat(lang, dateOptions).format(date);
-}
-
-export function getDateFriendly(date: Date) {
-	const dateOptions: Intl.DateTimeFormatOptions = {
-		day: 'numeric',
-		month: 'short'
-	};
+	if (!onlyNumber) dateOptions.month = 'short';
 
 	return new Intl.DateTimeFormat(get(store).lang, dateOptions)
 		.format(date)
