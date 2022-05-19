@@ -330,11 +330,22 @@
 			height: 100vh;
 		}
 
+		.month-headline {
+			padding: 0.75rem calc(0.25rem + var(--border-size));
+			font-size: 2.5rem;
+		}
+
 		.slider-month {
 			height: 65vh;
 		}
 
-		.day-text {
+		.day {
+			font-size: 0.8rem;
+		}
+		.day.headline {
+			font-size: 0.6rem;
+		}
+		.day:not(.headline) {
 			line-height: 1;
 		}
 	}
