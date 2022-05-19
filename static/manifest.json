@@ -12,6 +12,6 @@
     "background_color": "#fff",
     "display": "standalone",
     "scope": "/",
-    "theme_color": "#005cef",
+    "theme_color": "#fff",
     "description": "Create your own calendar for printing and mobile homescreen"
 }
