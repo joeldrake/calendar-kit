@@ -257,6 +257,15 @@
 										?.click()}>Ändra</button
 							>
 						</div>
+						<div
+							data-id={index}
+							style="width:100%"
+							on:dragend={handleDragEnd}
+							on:dragenter={handleDragEnter}
+							on:dragleave={handleDragLeave}
+							on:drop={handleDrop}
+							on:dragover={handleDragOver}
+						/>
 						<img
 							src={URL.createObjectURL(file)}
 							class="settings__image"
@@ -332,7 +341,7 @@
 	}
 
 	.settings__file-upload {
-		width: 0;
+		width: 0.01px;
 		height: 0;
 	}
 
@@ -344,8 +353,8 @@
 	}
 
 	.settings__image-wrapper {
-		display: grid;
-		grid-template-columns: 1fr auto;
+		display: flex;
+		flex-direction: row;
 		margin-bottom: 0.5rem;
 	}
 

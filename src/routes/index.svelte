@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { browser } from '$app/env';
 	import { fade } from 'svelte/transition';
 	import {
@@ -11,6 +12,23 @@
 	} from '$lib/utils/dateHelper';
 	import Settings from '$lib/components/Settings.svelte';
 	import { store, files } from '$lib/store';
+
+	onMount(() => {
+		if (browser && window.innerWidth <= 700) {
+			// mobile scrensize, scroll to active month
+			const date = new Date();
+			const index = date.getMonth();
+			const target = document.getElementById(`month-${index}`);
+			if (!target) return;
+			let scrollTop = window.pageYOffset;
+			const finalOffset = target.getBoundingClientRect().top + scrollTop;
+			window.scroll({
+				top: finalOffset,
+				left: 0,
+				behavior: 'smooth'
+			});
+		}
+	});
 
 	$: if (browser) {
 		document.documentElement.style.setProperty(
@@ -141,7 +159,7 @@
 {/if}
 
 {#each calendar[$store.year] as month, i}
-	<div class="month">
+	<div class="month" id={`month-${i}`}>
 		{#if $store.showSliders}
 			<input
 				type="range"
@@ -239,6 +257,7 @@
 		width: 20px;
 		transform: rotate(180deg);
 		appearance: slider-vertical;
+		-webkit-appearance: slider-vertical;
 		z-index: 1;
 	}
 
@@ -326,8 +345,10 @@
 	}
 
 	@media (max-width: 700px) {
+		/* mobile styles */
 		.month {
 			height: 100vh;
+			padding: 28px 28px 80px 28px; /* to get around iphone bottom searchbar */
 		}
 
 		.month-headline {
@@ -335,8 +356,14 @@
 			font-size: 2.5rem;
 		}
 
+		.slider-image {
+			width: calc(100% - 56px);
+			top: 5px;
+		}
 		.slider-month {
-			height: 65vh;
+			height: 58vh;
+			top: 28px;
+			right: 5px;
 		}
 
 		.day {
@@ -346,6 +373,9 @@
 			font-size: 0.6rem;
 		}
 		.day:not(.headline) {
+			line-height: 1;
+		}
+		.day-text {
 			line-height: 1;
 		}
 	}
