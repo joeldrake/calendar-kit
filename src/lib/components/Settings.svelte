@@ -296,6 +296,12 @@
 		grid-template-columns: 1fr auto;
 	}
 
+	@media (max-width: 700px) {
+		.settings {
+			width: 90vw !important;
+		}
+	}
+
 	.settings__inner {
 		background-color: white;
 		border-right: 1px solid var(--color-grey);

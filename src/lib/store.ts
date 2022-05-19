@@ -79,12 +79,9 @@ export function getFriendlyMonth(date: Date, forceLang?: string) {
 
 export function getFriendlyWeekday(date: Date, forceLang?: string) {
 	const dateOptions: Intl.DateTimeFormatOptions = {
-		weekday: 'long'
+		weekday: 'short'
 	};
 	const lang = forceLang || getLang();
-
-	//temp fix just to get the english weekdays to fit...
-	if (lang !== 'sv') dateOptions.weekday = 'short';
 
 	return new Intl.DateTimeFormat(lang, dateOptions).format(date);
 }

@@ -37,6 +37,7 @@
    cursor: default; /* 1 */
    line-height: 1.5; /* 2 */
    overflow-wrap: break-word; /* 3 */
+   hyphens: auto;
    -moz-tab-size: 4; /* 4 */
    tab-size: 4; /* 4 */
    -webkit-tap-highlight-color: transparent; /* 5 */

@@ -57,7 +57,13 @@ body {
 		Arial, sans-serif;
 	font-size: 16px;
 	color: var(--color-text-primary);
-	/* scroll-snap-type: y mandatory; */
+	
+}
+
+@media (max-width: 700px) {
+	html, body{
+		scroll-snap-type: y mandatory;
+	}
 }
 
 input,

@@ -235,10 +235,11 @@
 		position: fixed;
 		top: 20px;
 		right: 0;
-		height: calc(100vh - 90px);
+		height: calc(100vh - 140px);
 		width: 20px;
 		transform: rotate(180deg);
 		appearance: slider-vertical;
+		z-index: 1;
 	}
 
 	.week {
@@ -288,9 +289,10 @@
 	}
 
 	.month-headline {
-		padding: calc(0.25rem + var(--border-size));
+		padding: 1rem calc(0.25rem + var(--border-size));
 		font-size: 3rem;
 		text-transform: uppercase;
+		line-height: 1;
 	}
 
 	.day.headline {
@@ -321,6 +323,20 @@
 
 	.textRed {
 		color: var(--color-red);
+	}
+
+	@media (max-width: 700px) {
+		.month {
+			height: 100vh;
+		}
+
+		.slider-month {
+			height: 65vh;
+		}
+
+		.day-text {
+			line-height: 1;
+		}
 	}
 
 	@media print {
