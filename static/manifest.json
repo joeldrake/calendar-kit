@@ -1,0 +1,17 @@
+
+{
+    "name": "calendar-kit",
+    "start_url": "/",
+    "icons": [
+      {
+        "src": "icon.svg",
+        "type": "image/svg",
+        "sizes": "any"
+      }
+    ],
+    "background_color": "#fff",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#005cef",
+    "description": "Create your own calendar for printing and mobile homescreen"
+}

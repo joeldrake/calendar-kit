@@ -8,7 +8,9 @@
 		getDateFriendly,
 		getDaysBeforeFirstMonday,
 		getDaysInMonth,
-		getWeek
+		getWeek,
+		isToday,
+		isWeekend
 	} from '$lib/utils/dateHelper';
 	import Settings from '$lib/components/Settings.svelte';
 	import { store, files } from '$lib/store';
@@ -112,6 +114,8 @@
 
 				calendar[$store.year][month].push({
 					date,
+					isToday: isToday(date),
+					isWeekend: isWeekend(date),
 					label,
 					text,
 					textRed
@@ -192,7 +196,12 @@
 						{day.date && $store.showWeekNumbers ? getWeek(day.date) : ''}
 					</div>
 				{/if}
-				<div class="day" class:placeholder={day.isPlaceholder}>
+				<div
+					class="day"
+					class:placeholder={day.isPlaceholder}
+					class:today={day.isToday}
+					class:weekend={day.isWeekend}
+				>
 					{day.label || ''}
 					{#if day.text && day.label}
 						<div class="day-text" class:textRed={day.textRed}>
@@ -307,6 +316,14 @@
 		overflow: hidden;
 	}
 
+	.day.weekend {
+		background-color: var(--color-grey-lightest);
+	}
+	.day.today {
+		border-color: black;
+		z-index: 1;
+	}
+
 	.month-headline {
 		padding: 1rem calc(0.25rem + var(--border-size));
 		font-size: 3rem;
@@ -346,6 +363,12 @@
 
 	@media (max-width: 700px) {
 		/* mobile styles */
+
+		.settings-button {
+			border: none;
+			top: 17px;
+			left: 17px;
+		}
 		.month {
 			height: 100vh;
 			padding: 28px 28px 80px 28px; /* to get around iphone bottom searchbar */
@@ -353,7 +376,7 @@
 
 		.month-headline {
 			padding: 0.75rem calc(0.25rem + var(--border-size));
-			font-size: 2.5rem;
+			font-size: 2.25rem;
 		}
 
 		.slider-image {
@@ -393,6 +416,11 @@
 
 		.month {
 			page-break-after: always;
+		}
+
+		.day.today {
+			border-color: var(--color-grey);
+			z-index: 0;
 		}
 
 		@page {

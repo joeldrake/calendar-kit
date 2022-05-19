@@ -48,3 +48,17 @@ export function getWeek(date: Date) {
 		)
 	);
 }
+
+export function isToday(date: Date) {
+	const todayDate = new Date();
+
+	return (
+		date.getDate() === todayDate.getDate() &&
+		date.getMonth() === todayDate.getMonth() &&
+		date.getFullYear() === todayDate.getFullYear()
+	);
+}
+
+export function isWeekend(date: Date) {
+	return date.getDay() == 6 || date.getDay() == 0;
+}

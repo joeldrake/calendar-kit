@@ -5,8 +5,10 @@
 	--color-text-secondary: #444;
 	--color-background-primary: #fff;
 	--color-background-secondary: #e7e3da;
-	--color-grey-light: #efefef;
 	--color-grey: #ddd;
+	--color-grey-light: #efefef;
+	--color-grey-lightest: #f7f7f7;
+
 	--color-off-white: #edf0f2;
 	--color-work: #ffdd18;
 	--color-red: #ff3e00;
