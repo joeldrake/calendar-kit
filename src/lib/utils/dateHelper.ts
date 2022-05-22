@@ -1,4 +1,3 @@
-import { browser } from '$app/env';
 import { get } from 'svelte/store';
 import { store } from '$lib/store';
 
@@ -61,4 +60,9 @@ export function isToday(date: Date) {
 
 export function isWeekend(date: Date) {
 	return date.getDay() == 6 || date.getDay() == 0;
+}
+
+/** Example return: "2021-04-15" */
+export function standardDate(date: Date) {
+	return new Intl.DateTimeFormat('sv-SE').format(date);
 }

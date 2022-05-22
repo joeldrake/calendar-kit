@@ -10,7 +10,8 @@
 		getDaysInMonth,
 		getWeek,
 		isToday,
-		isWeekend
+		isWeekend,
+		standardDate
 	} from '$lib/utils/dateHelper';
 	import Settings from '$lib/components/Settings.svelte';
 	import { store, files } from '$lib/store';
@@ -26,8 +27,7 @@
 			const finalOffset = target.getBoundingClientRect().top + scrollTop;
 			window.scroll({
 				top: finalOffset,
-				left: 0,
-				behavior: 'smooth'
+				left: 0
 			});
 		}
 	});
@@ -123,6 +123,15 @@
 			}
 		}
 	}
+
+	function handleDblClick(date: Date) {
+		const newLine = prompt('Lägg till händelse', `${standardDate(date)} `);
+		console.log(newLine);
+		if (newLine) {
+			// should probably check if first word is a valid standardDate
+			$store.customDates = newLine + '\n' + $store.customDates;
+		}
+	}
 </script>
 
 <!-- <pre>
@@ -134,17 +143,9 @@
 	on:click={() => ($store.settingsOpen = !$store.settingsOpen)}
 >
 	{#if $store.settingsOpen}
-		<img
-			src="/images/close.svg"
-			alt="Stäng inställningar"
-			transition:fade={{ duration: 250 }}
-		/>
+		<img src="/images/close.svg" alt="Stäng inställningar" />
 	{:else}
-		<img
-			src="/images/menu.svg"
-			alt="Öppna inställningar"
-			transition:fade={{ duration: 250 }}
-		/>
+		<img src="/images/gear.svg" alt="Öppna inställningar" />
 	{/if}
 </button>
 
@@ -201,6 +202,9 @@
 					class:placeholder={day.isPlaceholder}
 					class:today={day.isToday}
 					class:weekend={day.isWeekend}
+					on:dblclick={!day.isPlaceholder
+						? () => handleDblClick(day.date)
+						: undefined}
 				>
 					{day.label || ''}
 					{#if day.text && day.label}
@@ -366,27 +370,33 @@
 
 		.settings-button {
 			border: none;
-			top: 17px;
-			left: 17px;
+			top: auto;
+			left: auto;
+			bottom: 20px;
+			right: 5px;
 		}
+
 		.month {
 			height: 100vh;
 			padding: 28px 28px 80px 28px; /* to get around iphone bottom searchbar */
 		}
 
 		.month-headline {
-			padding: 0.75rem calc(0.25rem + var(--border-size));
+			padding: 0.75rem calc(0.25rem + var(--border-size)) 0.5rem
+				calc(0.25rem + var(--border-size));
 			font-size: 2.25rem;
 		}
 
 		.slider-image {
 			width: calc(100% - 56px);
-			top: 5px;
+			top: 40px;
+			left: 28px;
 		}
 		.slider-month {
 			height: 58vh;
 			top: 28px;
-			right: 5px;
+			right: auto;
+			left: 5px;
 		}
 
 		.day {

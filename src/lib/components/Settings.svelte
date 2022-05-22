@@ -239,7 +239,7 @@
 				{#each $files as file, index}
 					<div class="settings__image-wrapper">
 						<div>
-							{$store.months[index]}
+							<span class="settings__image-name">{$store.months[index]}</span>
 
 							<input
 								id={`single-file-upload-${index}`}
@@ -298,17 +298,11 @@
 		position: fixed;
 		top: 0;
 		left: 0;
-		z-index: 1;
+		z-index: 2;
 		height: 100vh;
 		width: 33vw;
 		display: grid;
 		grid-template-columns: 1fr auto;
-	}
-
-	@media (max-width: 700px) {
-		.settings {
-			width: 90vw !important;
-		}
 	}
 
 	.settings__inner {
@@ -318,6 +312,16 @@
 		height: 100vh;
 		padding: 80px 20px;
 		overflow-x: auto;
+	}
+
+	@media (max-width: 700px) {
+		.settings {
+			width: 90vw !important;
+		}
+
+		.settings__inner {
+			padding-top: 20px;
+		}
 	}
 
 	.resizer {
@@ -341,6 +345,7 @@
 	}
 
 	.settings__file-upload {
+		display: block;
 		width: 0.01px;
 		height: 0;
 	}
@@ -358,6 +363,10 @@
 		margin-bottom: 0.5rem;
 	}
 
+	.settings__image-name {
+		white-space: nowrap;
+	}
+
 	button.settings__image-button {
 		width: auto;
 		display: block;
@@ -371,7 +380,7 @@
 		width: 100%;
 		border: var(--border-size) solid var(--color-grey);
 
-		font-size: 0.8em;
+		font-size: 1rem;
 	}
 
 	@media print {
