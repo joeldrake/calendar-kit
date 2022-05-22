@@ -235,41 +235,40 @@
 				Ladda upp bilder
 			</button>
 
-			{#if $files}
-				{#each $files as file, index}
-					<div class="settings__image-wrapper">
-						<div>
-							<span class="settings__image-name">{$store.months[index]}</span>
+			{#each Array.from({ length: 12 }, (_, i) => i) as index}
+				<div class="settings__image-wrapper">
+					<div>
+						<span class="settings__image-name">{$store.months[index]}</span>
 
-							<input
-								id={`single-file-upload-${index}`}
-								class="settings__file-upload"
-								type="file"
-								accept="image/*"
-								on:change={(e) => handleFileChanged(e, index)}
-							/>
-
-							<button
-								class="settings__image-button"
-								on:click={() =>
-									document
-										.getElementById(`single-file-upload-${index}`)
-										?.click()}>Ändra</button
-							>
-						</div>
-						<div
-							data-id={index}
-							style="width:100%"
-							on:dragend={handleDragEnd}
-							on:dragenter={handleDragEnter}
-							on:dragleave={handleDragLeave}
-							on:drop={handleDrop}
-							on:dragover={handleDragOver}
+						<input
+							id={`single-file-upload-${index}`}
+							class="settings__file-upload"
+							type="file"
+							accept="image/*"
+							on:change={(e) => handleFileChanged(e, index)}
 						/>
+
+						<button
+							class="settings__image-button"
+							on:click={() =>
+								document.getElementById(`single-file-upload-${index}`)?.click()}
+							>Ändra</button
+						>
+					</div>
+					<div
+						data-id={index}
+						style="width:100%"
+						on:dragend={handleDragEnd}
+						on:dragenter={handleDragEnter}
+						on:dragleave={handleDragLeave}
+						on:drop={handleDrop}
+						on:dragover={handleDragOver}
+					/>
+					{#if $files[index]}
 						<img
-							src={URL.createObjectURL(file)}
+							src={URL.createObjectURL($files[index])}
 							class="settings__image"
-							alt={file.name}
+							alt={$files[index].name}
 							width="64px"
 							height="64px"
 							draggable="true"
@@ -281,9 +280,9 @@
 							on:drop={handleDrop}
 							on:dragover={handleDragOver}
 						/>
-					</div>
-				{/each}
-			{/if}
+					{/if}
+				</div>
+			{/each}
 
 			<button disabled={!$files.length} on:click={handleClearFiles}>
 				Rensa bilder
