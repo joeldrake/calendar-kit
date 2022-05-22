@@ -4,14 +4,19 @@
     "start_url": "/",
     "icons": [
       {
+        "src": "icon.png",
+        "type": "image/png",
+        "sizes": "512x"
+      },
+      {
         "src": "icon.svg",
         "type": "image/svg",
         "sizes": "any"
       }
     ],
-    "background_color": "#fff",
+    "background_color": "#ffffff",
     "display": "standalone",
     "scope": "/",
-    "theme_color": "#fff",
+    "theme_color": "#ffffff",
     "description": "Create your own calendar for printing and mobile homescreen"
 }
